@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-import ru.danilov.quality.model.LinkTag;
-import ru.danilov.quality.model.MetaTag;
+import ru.danilov.quality.dto.LinkTagDto;
+import ru.danilov.quality.dto.MetaTagDto;
 import ru.danilov.quality.service.ExternalServiceParsingService;
 
 import java.util.List;
@@ -22,12 +22,12 @@ public class ExternalServiceParsingController {
     }
 
     @GetMapping("/links")
-    public Mono<List<LinkTag>> parseLinkTags() {
+    public Mono<List<LinkTagDto>> parseLinkTags() {
         return externalServiceParsingService.fetchAndParseLinkTags("https://502502.ru/catalog/");
     }
 
     @GetMapping("/meta")
-    public Mono<List<MetaTag>> parseMetaTags() {
+    public Mono<List<MetaTagDto>> parseMetaTags() {
         return externalServiceParsingService.fetchAndParseMetaTags("https://502502.ru/catalog/");
     }
 }
