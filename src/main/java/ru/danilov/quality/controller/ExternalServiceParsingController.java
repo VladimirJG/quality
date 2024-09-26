@@ -23,11 +23,11 @@ public class ExternalServiceParsingController {
 
     @GetMapping("/links")
     public Mono<List<LinkTagDto>> parseLinkTags() {
-        return externalServiceParsingService.fetchAndParseLinkTags("https://502502.ru/catalog/");
+        return externalServiceParsingService.fetchAndParseLinkTags();
     }
 
     @GetMapping("/meta")
     public Mono<List<MetaTagDto>> parseMetaTags() {
-        return externalServiceParsingService.fetchAndParseMetaTags("https://502502.ru/catalog/");
+        return externalServiceParsingService.fetchAndParseMetaTags();
     }
 }

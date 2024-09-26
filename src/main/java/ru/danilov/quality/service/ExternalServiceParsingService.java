@@ -16,22 +16,23 @@ import java.util.List;
 @Service
 public class ExternalServiceParsingService {
     private final WebClient webClient;
+    private final String URL = "https://502502.ru/catalog/";
 
     public ExternalServiceParsingService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.build();
     }
 
-    public Mono<List<LinkTagDto>> fetchAndParseLinkTags(String url) {
+    public Mono<List<LinkTagDto>> fetchAndParseLinkTags() {
         return webClient.get()
-                .uri(url)
+                .uri(URL)
                 .retrieve()
                 .bodyToMono(String.class)
                 .map(this::parseLinkTags);
     }
 
-    public Mono<List<MetaTagDto>> fetchAndParseMetaTags(String url) {
+    public Mono<List<MetaTagDto>> fetchAndParseMetaTags() {
         return webClient.get()
-                .uri(url)
+                .uri(URL)
                 .retrieve()
                 .bodyToMono(String.class)
                 .map(this::parseMetaTags);
