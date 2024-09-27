@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: WaterDB
+      POSTGRES_USER: User
+      POSTGRES_PASSWORD: Pass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    image: quality
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/WaterDB
+      SPRING_DATASOURCE_USERNAME: User
+      SPRING_DATASOURCE_PASSWORD: Pass
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
+
