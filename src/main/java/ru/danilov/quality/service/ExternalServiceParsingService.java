@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -21,7 +22,7 @@ public class ExternalServiceParsingService {
     public ExternalServiceParsingService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.build();
     }
-
+    @Cacheable(value = "linkTagCache", key = "'linkTags'")
     public Mono<List<LinkTagDto>> fetchAndParseLinkTags() {
         return webClient.get()
                 .uri(URL)
@@ -29,7 +30,7 @@ public class ExternalServiceParsingService {
                 .bodyToMono(String.class)
                 .map(this::parseLinkTags);
     }
-
+    @Cacheable(value = "metaTagCache", key = "'metaTags'")
     public Mono<List<MetaTagDto>> fetchAndParseMetaTags() {
         return webClient.get()
                 .uri(URL)
