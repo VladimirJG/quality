@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class MetaTagService {
     private final ExternalServiceParsingService externalServiceParsingService;
     private final MetaTagRepository metaTagRepository;
@@ -23,7 +24,6 @@ public class MetaTagService {
         this.modelMapper = modelMapper;
     }
 
-    @Transactional
     public void addAllMetaTagToDB() {
         List<MetaTagDto> metaTagDtos = externalServiceParsingService.fetchAndParseMetaTags().block();
         assert metaTagDtos != null;
@@ -43,7 +43,6 @@ public class MetaTagService {
         return metaTagOptional.orElse(null);
     }
 
-    @Transactional
     public void createMetaTag(MetaTag metaTag) {
         if (metaTag == null) {
             throw new MetaTagServiceException("MetaTag не может быть null");
@@ -51,7 +50,6 @@ public class MetaTagService {
         metaTagRepository.save(metaTag);
     }
 
-    @Transactional
     public void deleteMetaById(Long id) {
         if (id == null) {
             throw new MetaTagServiceException("MetaTag ID не может быть null");
@@ -59,12 +57,10 @@ public class MetaTagService {
         metaTagRepository.deleteById(id);
     }
 
-    @Transactional
     public void deleteAllMetaTags() {
         metaTagRepository.deleteAll();
     }
 
-    @Transactional
     public MetaTag updateMetaTag(MetaTag metaTag) {
         if (metaTag == null || metaTag.getId() == null) {
             throw new MetaTagServiceException("MetaTag или metaTag.getId() не может быть null");
@@ -75,7 +71,7 @@ public class MetaTagService {
         }
         return metaTagRepository.save(metaTag);
     }
-
+//TODO "Разобраться почему маппер записывает null"
     private MetaTag convertToMetaTag(MetaTagDto metaTagDto) {
         return modelMapper.map(metaTagDto, MetaTag.class);
     }
