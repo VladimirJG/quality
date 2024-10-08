@@ -28,7 +28,9 @@ public class MetaTagService {
         List<MetaTagDto> metaTagDtos = externalServiceParsingService.fetchAndParseMetaTags().block();
         assert metaTagDtos != null;
         for (MetaTagDto metaTagDto : metaTagDtos) {
-            MetaTag metaTag = convertToMetaTag(metaTagDto);
+            MetaTag metaTag = new MetaTag();
+            metaTag.setContent(metaTagDto.content());
+            metaTag.setName(metaTagDto.name());
             if (isMetaTagNotExist(metaTag)) {
                 metaTagRepository.save(metaTag);
             }

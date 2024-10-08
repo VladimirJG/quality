@@ -1,8 +1,8 @@
 package ru.danilov.quality.service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.danilov.quality.dto.LinkTagDto;
 import ru.danilov.quality.exception.LinkTagNotFoundException;
@@ -25,17 +25,26 @@ public class LinkTegService {
     @Transactional
     public void addToDbAllLinkTags() {
         Mono<List<LinkTagDto>> listMono = externalServiceParsingService.fetchAndParseLinkTags();
-        listMono.flatMapMany(linkTags -> {
-            return Flux.fromIterable(linkTags)
-                    .map(linkTagDto -> {
-                        LinkTag linkTag = new LinkTag();
-                        linkTag.setRel(linkTagDto.rel());
-                        linkTag.setType(linkTagDto.type());
-                        linkTag.setHref(linkTagDto.href());
-                        linkTag.setSizes(linkTagDto.sizes());
-                        return linkTag;
-                    });
-        }).doOnNext(linkTagRepository::save).then().block();
+        List<LinkTagDto> linkTagDtoList = listMono.block();
+
+        if (linkTagDtoList != null) {
+            linkTagDtoList.forEach(linkTagDto -> {
+                Optional<LinkTag> optionalLinkTag = linkTagRepository
+                        .findByRelAndHrefAndSizes(linkTagDto.rel(),
+                                linkTagDto.href(),
+                                linkTagDto.sizes());
+
+                if (optionalLinkTag.isEmpty()) {
+                    LinkTag linkTag = new LinkTag();
+                    linkTag.setRel(linkTagDto.rel());
+                    linkTag.setType(linkTagDto.type());
+                    linkTag.setHref(linkTagDto.href());
+                    linkTag.setSizes(linkTagDto.sizes());
+
+                    linkTagRepository.save(linkTag);
+                }
+            });
+        }
     }
 
     @Transactional(readOnly = true)
