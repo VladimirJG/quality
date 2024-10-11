@@ -16,12 +16,6 @@ public class MetaTagController {
         this.metaTagService = metaTagService;
     }
 
-    @PostMapping("/add-all")
-    public ResponseEntity<Void> addAllMetaTagsToDB() {
-        metaTagService.addAllMetaTagToDB();
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<MetaTag> getMetaTagById(@PathVariable Long id) {
         MetaTag metaTag = metaTagService.getMetaById(id);

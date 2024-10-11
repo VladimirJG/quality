@@ -17,12 +17,6 @@ public class LinkTagController {
         this.linkTegService = linkTegService;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> addAllTags() {
-        linkTegService.addToDbAllLinkTags();
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<LinkTag>> getAllLinks() {
         List<LinkTag> allLinkTags = linkTegService.getAllLinkTags();
