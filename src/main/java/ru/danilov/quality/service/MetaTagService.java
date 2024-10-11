@@ -1,40 +1,20 @@
 package ru.danilov.quality.service;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.danilov.quality.dto.MetaTagDto;
 import ru.danilov.quality.exception.MetaTagServiceException;
 import ru.danilov.quality.model.MetaTag;
 import ru.danilov.quality.repository.MetaTagRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class MetaTagService {
-    private final ExternalServiceParsingService externalServiceParsingService;
     private final MetaTagRepository metaTagRepository;
-    private final ModelMapper modelMapper;
 
-    public MetaTagService(ExternalServiceParsingService parsingService, MetaTagRepository metaTagRepository, ModelMapper modelMapper) {
-        this.externalServiceParsingService = parsingService;
+    public MetaTagService(MetaTagRepository metaTagRepository) {
         this.metaTagRepository = metaTagRepository;
-        this.modelMapper = modelMapper;
-    }
-
-    public void addAllMetaTagToDB() {
-        List<MetaTagDto> metaTagDtos = externalServiceParsingService.fetchAndParseMetaTags().block();
-        assert metaTagDtos != null;
-        for (MetaTagDto metaTagDto : metaTagDtos) {
-            MetaTag metaTag = new MetaTag();
-            metaTag.setContent(metaTagDto.content());
-            metaTag.setName(metaTagDto.name());
-            if (isMetaTagNotExist(metaTag)) {
-                metaTagRepository.save(metaTag);
-            }
-        }
     }
 
     @Transactional(readOnly = true)
@@ -70,14 +50,5 @@ public class MetaTagService {
             throw new MetaTagServiceException("MetaTag с таким id не существует");
         }
         return metaTagRepository.save(metaTag);
-    }
-//TODO "Разобраться почему маппер записывает null"
-    private MetaTag convertToMetaTag(MetaTagDto metaTagDto) {
-        return modelMapper.map(metaTagDto, MetaTag.class);
-    }
-
-    private boolean isMetaTagNotExist(MetaTag metaTag) {
-        Optional<MetaTag> existingMetaTagOptional = metaTagRepository.findByNameAndContent(metaTag.getName(), metaTag.getContent());
-        return existingMetaTagOptional.isEmpty();
     }
 }
